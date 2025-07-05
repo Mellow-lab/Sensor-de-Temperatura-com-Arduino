@@ -1,0 +1,55 @@
+int baselineTemp = 40;
+int celsius = 0;
+int fahrenheit = 0;
+
+int redLed = 4;
+int orangeLed = 3;
+int yellowLed = 2;
+int motorPin = 5;
+
+void setup() {
+  pinMode(A0, INPUT);
+  Serial.begin(9600);
+
+  pinMode(redLed, OUTPUT);
+  pinMode(orangeLed, OUTPUT);
+  pinMode(yellowLed, OUTPUT);
+  pinMode(motorPin, OUTPUT);
+}
+
+void loop() {
+  celsius = map(((analogRead(A0) - 20) * 3.04), 0, 1023, -40, 125);
+  fahrenheit = ((celsius * 9) / 5 + 32);
+
+  Serial.print(celsius);
+  Serial.print(" C, ");
+  Serial.print(fahrenheit);
+  Serial.println(" F");
+
+  // Desliga tudo
+  digitalWrite(redLed, LOW);
+  digitalWrite(orangeLed, LOW);
+  digitalWrite(yellowLed, LOW);
+  analogWrite(motorPin, 0);
+
+  // Temperatura entre 40 e 50
+  if (celsius >= baselineTemp && celsius < baselineTemp + 10) {
+    digitalWrite(yellowLed, HIGH);
+    analogWrite(motorPin, 80);
+  } 
+  // Entre 50 e 60
+  else if (celsius >= baselineTemp + 10 && celsius < baselineTemp + 20) {
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(orangeLed, HIGH);
+    analogWrite(motorPin, 150);
+  } 
+  // Acima de 60
+  else if (celsius >= baselineTemp + 20) {
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(orangeLed, HIGH);
+    digitalWrite(redLed, HIGH);
+    analogWrite(motorPin, 255);
+  }
+
+  delay(1000);
+}
